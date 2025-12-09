@@ -103,6 +103,7 @@ function App() {
 
   const handleUserName = async () => {
     const name = await checkLoginAndGetName();
+    console.log((name));
     if (name) {
       setUserName(name)
     }
@@ -120,7 +121,8 @@ function App() {
 
   function createLocation() {
     handleUserName();
-    //console.log("Username:", userName);
+    console.log(typeof userName);
+    console.log("Username:", userName);
     client.models.Location.create({
       date: date,
       time: time,
@@ -134,6 +136,15 @@ function App() {
       // lng: lng,
 
     });
+     setDate("");
+    setTime("");
+    setTrack(track);
+    setType(type);
+    setDiameter(diameter);
+    setUserName("");
+    setDescription("");
+    //setLat(0);
+    //setLng(0);
   }
 
   function deleteLocation(id: string) {
