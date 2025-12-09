@@ -1,10 +1,11 @@
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, SyntheticEvent  } from "react";
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { checkLoginAndGetName } from "./utils/AuthUtils";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { generateClient } from "aws-amplify/data";
 import "@aws-amplify/ui-react/styles.css";
+import { uploadData } from "aws-amplify/storage";
 
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { PickingInfo } from "@deck.gl/core/typed";
@@ -142,6 +143,7 @@ function App() {
   const [description, setDescription] = useState<string>("");
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [placePhotos, setPlacePhotos] = useState<File[]>([]);
 
   const [tab, setTab] = useState("1");
 
@@ -545,6 +547,55 @@ function App() {
 
   }
 
+  async function handleUpload(event: SyntheticEvent,id: string) {
+        event.preventDefault();
+
+        if(userName) {
+            let placePhotosUrls: string[] = [];
+
+            if (placePhotos) {
+                const uploadResult = await uploadPhotos(placePhotos)
+                placePhotosUrls = uploadResult.urls;
+               
+            }
+
+            await client.models.Location.update({
+                id: id,
+                photos: placePhotosUrls,
+
+            })
+
+
+            clearFields();
+        }
+    }
+
+    function clearFields() {
+        //setuserName('');
+        setPlacePhotos([]);
+    }
+
+    async function uploadPhotos(files: File[]): Promise<{
+        urls: string[]
+
+    }> {
+        const urls: string[] = [];
+ 
+        for (const file of files) {
+            console.log(`uploading file ${file.name}`)
+            const result = await uploadData({
+                data: file,
+                path: `originals/${file.name}`
+            }).result
+            urls.push(result.path);
+  
+        }
+        return {
+            urls,
+         
+        };
+    }
+
 
 
   return (
@@ -666,6 +717,15 @@ function App() {
                       }}
                     >
                       Delete{" "}
+                    </Button>
+                    <br />
+                    <Button
+                      onClick={(e)=>{
+                        handleUpload(e, clickInfo.properties.id);
+                        setShowPopup(false);
+                      }}
+                      >
+                      Upload Photo
                     </Button>
                   </Popup>
                 )}
