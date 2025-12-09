@@ -17,15 +17,13 @@ const schema = a.schema({
       time: a.time(), 
       track: a.integer(),
       type: a.string(), 
-      status: a.string(), 
       diameter: a.float(),
       length: a.float(), 
       lat: a.float(),
-      long: a.float(),
-      name: a.string(),
+      lng: a.float(),
+      username: a.string(),
       description: a.string(),
       photos: a.string().array(),
-      thumbs: a.string().array(),
       comments: a.ref('Comment').array()
     })
     .authorization((allow) => [allow.publicApiKey()]),
