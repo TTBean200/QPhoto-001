@@ -26,7 +26,7 @@ function App() {
 
   return (
     <main>
-      <h1>My todos</h1>
+      {/* <h1>My todos</h1> */}
       <button onClick={createLocation}>+ new</button>
       <ul>
         {location.map(location => <li
