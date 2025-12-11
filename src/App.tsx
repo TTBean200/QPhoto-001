@@ -6,6 +6,7 @@ import { useAuthenticator } from '@aws-amplify/ui-react';
 import { generateClient } from "aws-amplify/data";
 import "@aws-amplify/ui-react/styles.css";
 import { uploadData } from "aws-amplify/storage";
+//import { StorageImage } from "@aws-amplify/ui-react-storage";
 
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { PickingInfo } from "@deck.gl/core/typed";
@@ -607,6 +608,7 @@ function App() {
 
 
 
+
   return (
     <main>
       <h1>Lift Station A-19 Force Main Replacement Project</h1>
@@ -842,6 +844,14 @@ function App() {
               </ScrollView>
             </>)
           },
+          {
+            label: "Photos and Comments",
+            value: "3",
+            content: (<>
+              <h3>Photos and Comments</h3>
+
+            </>)
+          }
         ]}
       />
 
