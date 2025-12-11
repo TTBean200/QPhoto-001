@@ -26,7 +26,7 @@ const schema = a.schema({
       photos: a.string().array(),
       comments: a.ref('Comment').array()
     })
-    .identifier(['lat', 'lng'])
+    //.identifier(['lat', 'lng'])
     .authorization((allow) => [allow.publicApiKey()]),
 });
 
