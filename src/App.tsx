@@ -7,13 +7,14 @@ import { generateClient } from "aws-amplify/data";
 import "@aws-amplify/ui-react/styles.css";
 import { uploadData, remove } from "aws-amplify/storage";
 import { StorageImage } from "@aws-amplify/ui-react-storage"; //Hong
-
-
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { PickingInfo } from "@deck.gl/core/typed";
-import "@aws-amplify/ui-react/styles.css";
-
+import { type SearchCriteria } from "./components/Types";
+import SearchComponent from "./components/SearchComponent";
+//import { SearchComponent, type SearchCriteria} from "./components/SearchComponent";
+//import "@aws-amplify/ui-react/styles.css";
 import "maplibre-gl/dist/maplibre-gl.css"; // Import maplibre-gl styles
+//import "./components.css";  //Hong
 
 import {
   Map,
@@ -55,6 +56,8 @@ import { GeoJsonLayer } from "@deck.gl/layers/typed";
 //import { IconLayer } from "@deck.gl/layers/typed";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { TextLayer } from "@deck.gl/layers/typed";
+import { ENABLE_EMR_SERVICE_POLICY_V2 } from "aws-cdk-lib/cx-api";
+import { render } from "react-dom";
 
 
 const theme: Theme = {
@@ -670,6 +673,15 @@ function App() {
   }
 
   //Hong's addition
+
+  const [searchParms, setSearchParms] = useState<SearchCriteria>({startDate: '', endDate: ''})
+ 
+  const getSearchCriteria = ( data:SearchCriteria ) => {
+
+      console.log("in Apps data is ", data)
+      setSearchParms(data)
+  }
+
   function previewPhotos(event: CustomEvent) {
         
         if (event.target.files) {
@@ -681,14 +693,71 @@ function App() {
         }
   }
 
+  //function filterLocation() :Promise<Array<Schema["Location"]["type"]>>{
+  function filterLocation() {
+
+      //console.log("searchParams: ", searchParms.startDate, searchParms.endDate)
+
+      if ( searchParms.startDate || searchParms.endDate) {
+        
+        const startDateVal = (searchParms.startDate && searchParms.startDate.trim().length!=0 ? 
+                      searchParms.startDate : null )
+        //console.log(startDateVal)
+
+        const endDateVal = (searchParms.endDate && searchParms.endDate.trim().length!=0 ? 
+                      searchParms.endDate : null )
+        //console.log(endDateVal)
+    
+      
+        let location3:Array<Schema["Location"]["type"]>=new Array<Schema["Location"]["type"]>()
+
+        if ( startDateVal && endDateVal) {
+
+          location.forEach( (item) => {
+              if ( item.date && (item.date >= startDateVal) && (item.date <= endDateVal)) {
+                location3.push(item)
+              }
+          })
+
+        }else if (startDateVal) {
+          
+          location.forEach( (item) => {
+              if ( item.date && (item.date >= startDateVal)) {
+                location3.push(item)
+              }
+          })
+            
+        }else if (endDateVal) {
+          location.forEach( (item) => {
+              if ( item.date && (item.date <= endDateVal)) {
+                location3.push(item)
+              }
+          })
+        }else {
+          location3= location;
+        }
+          
+        return location3.sort((a, b) => a.date!.localeCompare(b.date!))
+      } else {
+        
+        return location.sort((a, b) => a.date!.localeCompare(b.date!))
+      }
+    
+  }
 
   function renderPhotos() {
 
+
+    console.log(" render photos is called")
     const rows: any[] = []
 
         if (location ) {
 
-            location.forEach ( (loc, index) => {
+            let location2=filterLocation()
+
+            console.log("location2 =", location2)
+
+            location2.forEach ( (loc, index) => {
               if (loc.photos) {
 
                 rows.push(
@@ -986,6 +1055,7 @@ function App() {
             value: "3",
             content: (<>
               <h3>Photos and Comments</h3>
+              <SearchComponent onGetSearchCriteria={getSearchCriteria}/>
               {renderPhotos()}
 
             </>)
