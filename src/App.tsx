@@ -56,8 +56,8 @@ import { GeoJsonLayer } from "@deck.gl/layers/typed";
 //import { IconLayer } from "@deck.gl/layers/typed";
 import { MVTLayer } from "@deck.gl/geo-layers/typed";
 import { TextLayer } from "@deck.gl/layers/typed";
-import { ENABLE_EMR_SERVICE_POLICY_V2 } from "aws-cdk-lib/cx-api";
-import { render } from "react-dom";
+//import { ENABLE_EMR_SERVICE_POLICY_V2 } from "aws-cdk-lib/cx-api";
+//import { render } from "react-dom";
 
 
 const theme: Theme = {
@@ -1019,7 +1019,7 @@ function App() {
                       <TableBody>
                         {location.map((location) => (
                           <TableRow
-                            onDoubleClick={(e) =>{
+                            onDoubleClick={() =>{
                                 console.log( "location photos url =", location.photos)
                                 if ( location.photos)
                                   deleteLocation2(location.id, location.photos)
